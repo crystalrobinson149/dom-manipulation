@@ -1,50 +1,112 @@
-/**
- * ================ Introduction ===============================
- * The document object is an object that represent the current HTML page: eg: index.html
- *
- * Using the method "getElementById" we can select any HTML element by it's assigned id attribute.
- * (see index.html line 11)
- *
- * We can cached or store the reference to these element in variables and
- * change or manipulate it using JavaScript.
- *
- * 👨‍💻 Happy Hacking! 👩‍💻
- */
+console.log("This is Lab 316.1.1");
 
-// TODO: 1. Select the button and title elements using their assigned id's.
-// Check index.html to find their id's
-const button = document.getElementById("magicButton"); // <- this one is done!
-const title = document.getElementById("___"); // TODO: <- pass the id of the H1
+// Select and cache the <main> element
+const mainEl = document.querySelector('main');
 
-// TODO: 2. console log the button and title variables:
-console.log(); // <-- button
-console.log(); // <-- title
-// check the browser console, you should see the elements!
+// Set the background color of mainEl using CSS custom property
+mainEl.style.backgroundColor = 'var(--main-bg)';
 
-// TODO: 3. Magic
-// Add a click event listener to the button,
-// replace the underscores with the button variable: eg (button.onclick)
-____.onclick = function () {
-  // TODO: Click the button on the browser and see the magic!
+// Set the content of mainEl
+mainEl.innerHTML = '<h1>DOM Manipulation</h1>';
 
-  // TODO: Experiment! -> Change the text and style of the title
-  title.textContent = "✨ Magic Happened! ✨";
-  title.style.color = "purple";
-  title.style.fontSize = "2em";
-};
+// Add the class 'flex-ctr' to mainEl
+mainEl.classList.add('flex-ctr');
 
-// This is just a small example of how we can make dynamic applications using JS!
-// TODO: 4. Read more about the DOM:
-// https://www.w3schools.com/js/js_htmldom.asp
-// https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction
+// Select and cache the <nav id="top-menu"> element
+const topMenuEl = document.getElementById('top-menu');
 
-// Fun Add-On Challenge:
-// Add another button to create your own page color theme.
-// Steps:
-// 1. Add another button in the HTML file with an unique id.
-// 2. Cache the new button in a variable using "getElementById".
-// 3. To the "onclick" property of the button assign a new function that changes:
-// the background color and the text color eg:
-// ___.style.backgroundColor = "black"
-// ___.style.color = "white"
-// You can start right below this line.
+// Set the height of topMenuEl
+topMenuEl.style.height = '100%';
+
+// Set the background color of topMenuEl using CSS custom property
+topMenuEl.style.backgroundColor = 'var(--top-menu-bg)';
+
+// Add the class 'flex-around' to topMenuEl
+topMenuEl.classList.add('flex-around');
+
+// Menu data structure
+const menuLinks = [
+  { text: 'about', href: '/about' },
+  { text: 'catalog', href: '/catalog', subLinks: [
+    { text: 'all', href: '/catalog/all' },
+    { text: 'top selling', href: '/catalog/top' },
+    { text: 'search', href: '/catalog/search' }
+  ]},
+  { text: 'orders', href: '/orders', subLinks: [
+    { text: 'new', href: '/orders/new' },
+    { text: 'pending', href: '/orders/pending' },
+    { text: 'history', href: '/orders/history' }
+  ]},
+  { text: 'account', href: '/account', subLinks: [
+    { text: 'profile', href: '/account/profile' },
+    { text: 'sign out', href: '/account/signout' }
+  ]}
+];
+
+// Iterate over menuLinks array and create menu buttons
+menuLinks.forEach(link => {
+  const a = document.createElement('a');
+  a.setAttribute('href', link.href);
+  a.textContent = link.text;
+  topMenuEl.appendChild(a);
+});
+
+// Select and cache the <nav id="sub-menu"> element
+const subMenuEl = document.getElementById('sub-menu');
+
+// Set the height and background color of subMenuEl
+subMenuEl.style.height = '100%';
+subMenuEl.style.backgroundColor = 'var(--sub-menu-bg)';
+
+// Add the class 'flex-around' to subMenuEl
+subMenuEl.classList.add('flex-around');
+
+// Set the position of subMenuEl to temporarily hide it
+subMenuEl.style.position = 'absolute';
+subMenuEl.style.top = '0';
+
+// Select and cache all <a> elements inside topMenuEl
+const topMenuLinks = document.querySelectorAll('#top-menu a');
+
+// Attach a delegated 'click' event listener to topMenuEl
+topMenuEl.addEventListener('click', function(event) {
+  event.preventDefault();
+  if (event.target.tagName !== 'A') return;
+  console.log(event.target.textContent);
+
+  // Toggle active class
+  topMenuLinks.forEach(link => link.classList.remove('active'));
+  event.target.classList.add('active');
+
+  // Show or hide submenu
+  const linkData = menuLinks.find(link => link.text === event.target.textContent.toLowerCase());
+  if (linkData && linkData.subLinks) {
+    subMenuEl.style.top = '100%';
+    buildSubmenu(linkData.subLinks);
+  } else {
+    subMenuEl.style.top = '0';
+  }
+});
+
+// Helper function to build submenu
+function buildSubmenu(subLinks) {
+  subMenuEl.innerHTML = '';
+  subLinks.forEach(link => {
+    const a = document.createElement('a');
+    a.setAttribute('href', link.href);
+    a.textContent = link.text;
+    subMenuEl.appendChild(a);
+  });
+}
+
+// Attach a delegated 'click' event listener to subMenuEl
+subMenuEl.addEventListener('click', function(event) {
+  event.preventDefault();
+  if (event.target.tagName !== 'A') return;
+  console.log(event.target.textContent);
+
+  subMenuEl.style.top = '0';
+  topMenuLinks.forEach(link => link.classList.remove('active'));
+
+  mainEl.innerHTML = `<h1>${event.target.textContent}</h1>`;
+});
